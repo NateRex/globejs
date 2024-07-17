@@ -1,0 +1,22 @@
+{
+    "name": "sample-app",
+    "version": "0.0.0",
+    "description": "Sample app used to test out capabilities of the GlobeJS package",
+    "private": true,
+    "author": {
+        "name": "Nathaniel Rex"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/NateRex/globejs"
+    },
+    "scripts": {
+        "clean": "rimraf dist",
+        "lint": "eslint . --ignore-path ../../.eslintignore --ext .ts",
+        "start": "webpack serve"
+    },
+    "dependencies": {
+        "globejs": "*",
+        "three": "^0.166.1"
+    }
+}
