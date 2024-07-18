@@ -1,31 +1,26 @@
 import 'globejs';
-import { AmbientLight, BoxGeometry, DirectionalLight, Mesh, MeshBasicMaterial, MeshPhongMaterial, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import { Visualizer } from 'globejs';
+import { BoxGeometry, DirectionalLight, Mesh, MeshPhongMaterial } from 'three';
 
-// Get container
+// Set up visualizer
 const container = document.getElementById('visualizer');
 if (container === undefined || container === null) {
-    throw new Error('Could not find "visualizer" container');
+    throw new Error('Could not find container');
 }
 
-// Init renderer, camera, and scene
-const renderer = new WebGLRenderer();
-renderer.setSize(container.offsetWidth, container.offsetHeight);
-container.appendChild(renderer.domElement);
-const camera = new PerspectiveCamera(30, container.offsetWidth / container.offsetHeight, 0.1, 100);
-camera.position.z = 5;
-const scene = new Scene();
+const viz = new Visualizer(container);
+
 
 // Add cubes
 function createCube(geometry, color, x) {
     const material = new MeshPhongMaterial({ color });
     const cube = new Mesh(geometry, material);
-    scene.add(cube);
+    viz.scene.add(cube);
    
     cube.position.x = x;
     
     return cube;
-  }
-
+}
 const geometry = new BoxGeometry( 1, 1, 1 );
 const cubes = [
     createCube(geometry, 0x44aa88,  0),
@@ -33,34 +28,19 @@ const cubes = [
     createCube(geometry, 0xaa8844,  2),
 ];
 
-// Add ambient light
-const ambientLight = new AmbientLight(0xffffff);
-scene.add(ambientLight);
 
-// Add directional light
+// Add directional lighting
 const directionalLight = new DirectionalLight(0xffffff, 3);
 directionalLight.position.set(-1, 2, 4);
-scene.add(directionalLight);
+viz.scene.add(directionalLight);
 
-// Renders single frame
-function renderFrame() {
-    renderer.render(scene, camera);
-}
 
-// Render loop
-function render(time) {
-    time *= 0.001;  // convert time to seconds
-
+// Perform updates pre-render of each frame
+viz.preRender.addListener(deltaTime => {
     cubes.forEach((cube, idx) => {
         const speed = 1 + idx * .1;
-        const rot = time * speed;
-        cube.rotation.x = rot;
-        cube.rotation.y = rot;
+        const rot = deltaTime * speed;
+        cube.rotation.x += rot;
+        cube.rotation.y += rot;
     });
-
-    renderFrame();
-    requestAnimationFrame(render);
-}
-
-// Start render loop
-requestAnimationFrame(render);
+});

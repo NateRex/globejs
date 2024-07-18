@@ -1,1 +1,1 @@
-console.log('hello from globejs');
+export * from './Visualizer';
